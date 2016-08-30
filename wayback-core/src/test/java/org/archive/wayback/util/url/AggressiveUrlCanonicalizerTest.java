@@ -227,6 +227,12 @@ public class AggressiveUrlCanonicalizerTest extends TestCase {
 
 			checkCanonicalization(origDefault,canonDefault);
 			checkCanonicalization(origNonDefault,canonNonDefault);
+
+			// ARI-5007 checks
+			checkCanonicalization("http://example.com/?+key+=++value+","example.com/?key=value");
+			checkCanonicalization("http://example.com/?%96","example.com/?%96");
+			checkCanonicalization("http://fitzhenrylaneonline.org/historical_material/?type=Maine+Locales+%26+Buildings&section=Castine+%96+First+Parish+Church+%281790%29+%2F+Unitarian+Universalist+Church",
+				"fitzhenrylaneonline.org/historical_material?buildings&section=castine%96+first+parish+church+(1790)+/unitarian+universalist+church&type=maine+locales");
 		}
 
 		// should we try to pass all of these, too?
