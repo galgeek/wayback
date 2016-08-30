@@ -235,12 +235,41 @@ public class AggressiveUrlCanonicalizer implements UrlCanonicalizer {
 		
 		// replace ' ' with '+' (this is only to match Alexa's canonicalization)
 		String newPath = searchURI.getEscapedPath().replace("%20","+");
+		String newQuery = searchURI.getEscapedQuery();
 		
 		// replace multiple consecutive '/'s in the path.
 		while(newPath.contains("//")) {
 			newPath = newPath.replace("//","/");
 		}
 		
+		// replace doubly encoded %25 (to match CDX SURTs)
+		while(newQuery.contains("%25")) {
+			newQuery = newQuery.replace("%25","%");
+		}
+
+		// replace some leading and trailing '+' with '' (to match CDX SURTs)
+		while(newQuery.startsWith("+")) {
+			newQuery = newQuery.substring(1,newQuery.length());
+		}
+		while(newQuery.contains("+%")) {
+			newQuery = newQuery.replace("+%","%");
+		}
+		while(newQuery.contains("+=")) {
+			newQuery = newQuery.replace("+=","=");
+		}
+		while(newQuery.contains("=+")) {
+			newQuery = newQuery.replace("=+","=");
+		}
+		while(newQuery.contains("?+")) {
+			newQuery = newQuery.replace("?+","?");
+		}
+		while(newQuery.contains("/+")) {
+			newQuery = newQuery.replace("/+","/");
+		}
+		while(newQuery.endsWith("+")) {
+			newQuery = newQuery.substring(0,newQuery.length()-1);
+		}
+
 		// this would remove trailing a '/' character, unless the path is empty
 		// but we're not going to do this just yet..
 //		if((newPath.length() > 1) && newPath.endsWith("/")) {
@@ -260,7 +289,7 @@ public class AggressiveUrlCanonicalizer implements UrlCanonicalizer {
 
 		sb.append(newPath);
 		if(searchURI.getEscapedQuery() != null) {
-			sb.append("?").append(searchURI.getEscapedQuery());
+			sb.append("?").append(newQuery);
 		}
 
 		return sb.toString();
