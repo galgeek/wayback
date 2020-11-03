@@ -124,7 +124,7 @@ public class ArchivalURLJSStringTransformerReplayRenderer extends TextReplayRend
 		//RewriteReplayParseEventHandler.addRewriteParseContext(context);
 		
 		
-		String replaced = transformer.transform(context, page.sb.toString());
+		String replaced = transformer.transform(context, page.sb.toString()) + "}";
 		
 		page.sb.setLength(0);
 		page.sb.ensureCapacity(replaced.length());
